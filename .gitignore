@@ -1,0 +1,39 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Build and local tooling
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Generated media and outputs
+output/
+assets/downloads/
+*.mp3
+*.wav
+*.m4a
+*.mp4
+*.mov
+*.srt
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/
