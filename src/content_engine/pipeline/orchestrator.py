@@ -16,7 +16,6 @@ from content_engine.pipeline.visuals import VisualSelector
 from content_engine.pipeline.voice import VoiceGenerator
 from content_engine.providers.llm import OpenAICompatibleScriptProvider
 from content_engine.providers.trends import build_trend_providers
-from content_engine.providers.tts import ElevenLabsTTSProvider, OpenAITTSProvider
 
 
 class ContentEngine:
@@ -24,10 +23,7 @@ class ContentEngine:
         self.settings = settings
         self.discovery = DiscoveryEngine(build_trend_providers(settings))
         self.script_writer = ScriptWriter(OpenAICompatibleScriptProvider(settings))
-        self.voice_generator = VoiceGenerator.default(
-            ElevenLabsTTSProvider(settings),
-            OpenAITTSProvider(settings),
-        )
+        self.voice_generator = VoiceGenerator.default(settings)
         self.visual_selector = VisualSelector(settings)
         self.video_assembler = VideoAssembler(settings)
         self.metadata_generator = MetadataGenerator()

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Iterable
+import xml.etree.ElementTree as ET
 
 import httpx
 
@@ -104,6 +105,50 @@ class NewsTrendProvider(TrendProvider):
         return ideas
 
 
+class GoogleNewsRssTrendProvider(TrendProvider):
+    def __init__(self) -> None:
+        super().__init__(name="google-news-rss")
+
+    def fetch(self, niche: str, limit: int) -> list[TrendIdea]:
+        params = {
+            "q": niche,
+            "hl": "en-US",
+            "gl": "US",
+            "ceid": "US:en",
+        }
+        with httpx.Client(timeout=20.0, headers={"User-Agent": USER_AGENT}) as client:
+            try:
+                response = client.get("https://news.google.com/rss/search", params=params)
+                response.raise_for_status()
+            except httpx.HTTPError:
+                return []
+
+        try:
+            root = ET.fromstring(response.text)
+        except ET.ParseError:
+            return []
+
+        ideas: list[TrendIdea] = []
+        for item in root.findall("./channel/item")[:limit]:
+            title = str(item.findtext("title", default="")).strip()
+            link = str(item.findtext("link", default="")).strip()
+            description = str(item.findtext("description", default="")).strip()
+            if not title:
+                continue
+            ideas.append(
+                TrendIdea(
+                    source="google-news-rss",
+                    title=title,
+                    summary=description or title,
+                    url=link,
+                    score_seed=0.58,
+                    emotional_triggers=_extract_emotional_triggers(f"{title} {description}"),
+                    keywords=_keywords_from_text(f"{title} {description}", niche),
+                )
+            )
+        return ideas
+
+
 class TikTokTrendProvider(TrendProvider):
     def __init__(self, settings: Settings) -> None:
         super().__init__(name="tiktok")
@@ -181,12 +226,13 @@ class MockTrendProvider(TrendProvider):
 
 
 def build_trend_providers(settings: Settings) -> list[TrendProvider]:
-    return [
-        TikTokTrendProvider(settings),
-        RedditTrendProvider(),
-        NewsTrendProvider(settings),
-        MockTrendProvider(),
-    ]
+    providers: list[TrendProvider] = [RedditTrendProvider(), GoogleNewsRssTrendProvider()]
+    if settings.tiktok_trend_endpoint:
+        providers.insert(0, TikTokTrendProvider(settings))
+    if not settings.free_mode and settings.news_api_key:
+        providers.append(NewsTrendProvider(settings))
+    providers.append(MockTrendProvider())
+    return providers
 
 
 def _extract_emotional_triggers(text: str) -> list[str]:

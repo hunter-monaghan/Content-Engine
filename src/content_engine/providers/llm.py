@@ -57,12 +57,13 @@ class HeuristicScriptProvider(ScriptGenerationProvider):
 
 class OpenAICompatibleScriptProvider(ScriptGenerationProvider):
     def __init__(self, settings: Settings) -> None:
+        self.free_mode = settings.free_mode
         self.api_key = settings.openai_api_key
         self.model = settings.openai_model
         self.base_url = "https://api.openai.com/v1/chat/completions"
 
     def generate(self, idea: TrendIdea, niche: str, ab_hooks: int) -> ScriptDraft:
-        if not self.api_key:
+        if self.free_mode or not self.api_key:
             return HeuristicScriptProvider().generate(idea, niche, ab_hooks)
 
         user_prompt = f"""

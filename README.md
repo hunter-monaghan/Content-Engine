@@ -1,3 +1,14 @@
+---
+title: Content Engine
+emoji: 🎬
+colorFrom: orange
+colorTo: yellow
+sdk: docker
+app_port: 8000
+pinned: false
+short_description: Free short-form video generation demo powered by local heuristics and open-source tools
+---
+
 # Content Engine
 
 Content Engine is a modular Python pipeline for generating short-form viral videos at scale. It covers idea discovery, virality scoring, script generation, voice synthesis, video assembly, caption packaging, scheduling, and lightweight analytics.
@@ -64,12 +75,15 @@ Install FFmpeg and place reusable background clips in `assets/backgrounds/` if y
 Supported integrations:
 
 - Reddit public JSON feeds for `r/AskReddit`, `r/Stories`, and `r/TrueOffMyChest`
-- NewsAPI for breaking stories
+- Google News RSS for free topical headlines
+- NewsAPI for breaking stories when you explicitly want the paid/API-key path
 - A configurable TikTok trend endpoint for scraper/API output
-- OpenAI-compatible LLM endpoint for script generation
-- ElevenLabs or OpenAI TTS for narration
+- local heuristic script generation
+- `espeak-ng` for free narration
+- optional OpenAI-compatible LLM endpoint for script generation
+- optional ElevenLabs or OpenAI TTS for narration
 
-The pipeline still runs without all keys configured by falling back to local heuristics and mock trend seeds.
+The pipeline now defaults to a no-cost mode. If you do not configure paid keys, it still works by using Reddit, Google News RSS, mock seeds, heuristic scripts, generated visuals, and `espeak-ng`.
 
 ### 3. Generate One Video
 
@@ -98,6 +112,21 @@ Open `http://localhost:8000` to use the browser dashboard. The site lets you:
 - monitor job status
 - preview recent videos
 - open scripts, captions, and metadata
+
+### 3C. Run Entirely Free
+
+The default `.env.example` is already configured for free mode:
+
+```bash
+FREE_MODE=true
+```
+
+That means:
+
+- no OpenAI dependency required
+- no ElevenLabs dependency required
+- no NewsAPI key required
+- no paid hosting required if you deploy to Hugging Face Spaces free tier
 
 ### 4. Batch Produce 10-50 Videos Per Day
 
@@ -183,28 +212,39 @@ The repo now includes a production-ready web app and deployment files:
 - [`render.yaml`](render.yaml) defines a Render web service
 - the browser UI lives at [`index.html`](src/content_engine/web/templates/index.html)
 
-### Fastest Hosting Path
+### Cheapest Hosting Path
 
-Render or Railway are the easiest fits because this project needs:
+Hugging Face Spaces is the best no-money option for this project because it supports Docker apps and exposes a public URL even on the free tier. Free Spaces can go to sleep when idle, so this is best for a demo or lightweight public tool, not guaranteed always-on production.
 
-- a real Python backend
-- FFmpeg available at runtime
-- environment variables for API keys
-- persistent or external storage for generated media
+### Free Hugging Face Spaces Deploy
+
+1. Create a new Hugging Face Space.
+2. Choose `Docker` as the SDK.
+3. Upload this repository or sync it from GitHub.
+4. Keep the root [`README.md`](README.md) because it now includes the required Spaces YAML metadata.
+5. Deploy with no secrets at all for free mode.
+
+Optional environment variables for a safer public demo:
+
+- `FREE_MODE=true`
+- `PUBLIC_GENERATION_ENABLED=true`
+- `MAX_JOBS_PER_IP=1`
+- `JOB_WINDOW_SECONDS=1800`
+- `SITE_NAME=Content Engine`
 
 ### Deploy Checklist
 
 1. Push this repo to GitHub.
-2. Create a web service on Render or Railway using the repo.
-3. Add environment variables from `.env.example`.
-4. Ensure the service exposes port `8000` or the platform `PORT`.
-5. Add persistent storage or move outputs to object storage for production.
+2. Create a Docker Space on Hugging Face.
+3. Point it at this codebase.
+4. Let the `Dockerfile` build with `ffmpeg` and `espeak-ng`.
+5. Open the public Space URL after the build finishes.
 
 ### Public Access Notes
 
-The website supports public generation by default, but that means strangers can consume your API credits. For production, you should strongly consider:
+The website supports public generation by default. In free mode, the bigger risk is abuse of your tiny free compute budget rather than API spend. For a public demo, you should strongly consider:
 
-- setting `APP_ADMIN_TOKEN`
-- disabling `PUBLIC_GENERATION_ENABLED`
-- adding object storage and a database
-- adding stronger rate limiting and user auth
+- lowering `MAX_JOBS_PER_IP`
+- increasing `JOB_WINDOW_SECONDS`
+- setting `APP_ADMIN_TOKEN` if you want private access
+- disabling `PUBLIC_GENERATION_ENABLED` if you only want personal use

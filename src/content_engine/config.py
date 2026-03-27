@@ -19,6 +19,7 @@ class Settings:
     project_root: Path
     output_dir: Path
     asset_dir: Path
+    free_mode: bool
     default_niche: str
     videos_per_run: int
     brand_font: str
@@ -52,8 +53,9 @@ class Settings:
             project_root=project_root,
             output_dir=output_dir,
             asset_dir=asset_dir,
+            free_mode=_env_bool("FREE_MODE", True),
             default_niche=os.getenv("DEFAULT_NICHE", "storytime"),
-            videos_per_run=int(os.getenv("VIDEOS_PER_RUN", "3")),
+            videos_per_run=int(os.getenv("VIDEOS_PER_RUN", "1")),
             brand_font=os.getenv("BRAND_FONT", "Arial"),
             openai_api_key=os.getenv("OPENAI_API_KEY"),
             openai_model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
@@ -70,7 +72,7 @@ class Settings:
             site_name=os.getenv("SITE_NAME", "Content Engine"),
             public_generation_enabled=_env_bool("PUBLIC_GENERATION_ENABLED", True),
             app_admin_token=os.getenv("APP_ADMIN_TOKEN"),
-            max_jobs_per_ip=int(os.getenv("MAX_JOBS_PER_IP", "3")),
+            max_jobs_per_ip=int(os.getenv("MAX_JOBS_PER_IP", "2")),
             job_window_seconds=int(os.getenv("JOB_WINDOW_SECONDS", "900")),
         )
 

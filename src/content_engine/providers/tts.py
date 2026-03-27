@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -56,6 +57,43 @@ class OpenAITTSProvider(TTSProvider):
             response.raise_for_status()
             output_path.write_bytes(response.content)
         return VoiceAsset(provider="openai", path=output_path, duration_seconds=30.0)
+
+
+class EspeakTTSProvider(TTSProvider):
+    def __init__(self) -> None:
+        self.binary = shutil.which("espeak-ng") or shutil.which("espeak")
+
+    def synthesize(self, text: str, output_path: Path) -> VoiceAsset:
+        if not self.binary:
+            raise RuntimeError("espeak-ng is not installed.")
+
+        wav_path = output_path.with_suffix(".wav")
+        speak_command = [
+            self.binary,
+            "-s",
+            "155",
+            "-v",
+            "en-us",
+            "-w",
+            str(wav_path),
+            text,
+        ]
+        subprocess.run(speak_command, check=True, capture_output=True)
+
+        encode_command = [
+            "ffmpeg",
+            "-y",
+            "-i",
+            str(wav_path),
+            "-acodec",
+            "libmp3lame",
+            str(output_path),
+        ]
+        subprocess.run(encode_command, check=True, capture_output=True)
+        wav_path.unlink(missing_ok=True)
+
+        duration = max(8, min(40, round(len(text.split()) * 0.42)))
+        return VoiceAsset(provider="espeak", path=output_path, duration_seconds=float(duration))
 
 
 class FallbackSilentTTSProvider(TTSProvider):
