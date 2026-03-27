@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ site_name }}</title>
+    <style>
+      :root {
+        --bg: #f5efe4;
+        --panel: rgba(255, 252, 246, 0.92);
+        --text: #1d1d1d;
+        --muted: #635b52;
+        --accent: #db5b2c;
+        --accent-dark: #8e2e12;
+        --border: rgba(29, 29, 29, 0.08);
+        --shadow: 0 18px 40px rgba(78, 45, 21, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(219, 91, 44, 0.18), transparent 28%),
+          radial-gradient(circle at top right, rgba(140, 117, 82, 0.18), transparent 22%),
+          linear-gradient(180deg, #fff9ef 0%, var(--bg) 100%);
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 56px;
+      }
+
+      .hero {
+        padding: 36px;
+        border-radius: 28px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(247,236,214,0.9));
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 12px;
+        color: var(--accent-dark);
+        margin-bottom: 14px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(38px, 6vw, 76px);
+        line-height: 0.95;
+      }
+
+      .hero p {
+        max-width: 760px;
+        font-size: 18px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 22px;
+        margin-top: 24px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 24px;
+        backdrop-filter: blur(14px);
+      }
+
+      form {
+        display: grid;
+        gap: 14px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid rgba(29, 29, 29, 0.12);
+        border-radius: 14px;
+        padding: 14px 16px;
+        font-size: 16px;
+        background: #fffdf8;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 14px 18px;
+        font-size: 16px;
+        font-weight: 700;
+        color: white;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        cursor: pointer;
+      }
+
+      .meta {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .status,
+      .jobs,
+      .videos {
+        display: grid;
+        gap: 14px;
+      }
+
+      .job,
+      .video {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(29, 29, 29, 0.08);
+        background: rgba(255, 255, 255, 0.75);
+      }
+
+      .job strong,
+      .video strong {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(219, 91, 44, 0.1);
+        color: var(--accent-dark);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .links a {
+        color: var(--accent-dark);
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      video {
+        width: 100%;
+        margin-top: 14px;
+        border-radius: 18px;
+        background: #000;
+      }
+
+      .section-title {
+        margin: 0 0 14px;
+        font-size: 22px;
+      }
+
+      .notice {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: rgba(255, 245, 230, 0.9);
+        color: var(--accent-dark);
+        font-size: 14px;
+      }
+
+      @media (max-width: 920px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .shell {
+          width: min(100% - 20px, 1180px);
+        }
+
+        .hero,
+        .panel {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="eyebrow">Automated Viral Video Factory</div>
+        <h1>{{ site_name }}</h1>
+        <p>
+          Discover trends, write hooks, render short-form videos, and package them for TikTok,
+          Snapchat Spotlight, and YouTube Shorts from one browser dashboard.
+        </p>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <h2 class="section-title">Launch New Batch</h2>
+          <form id="generate-form">
+            <label>
+              Niche
+              <input id="niche" name="niche" value="storytime" maxlength="40" />
+            </label>
+            <label>
+              Videos in this batch
+              <input id="limit" name="limit" type="number" min="1" max="5" value="1" />
+            </label>
+            <label>
+              Hook variants
+              <input id="ab_hooks" name="ab_hooks" type="number" min="1" max="5" value="2" />
+            </label>
+            <button type="submit">Generate Videos</button>
+          </form>
+          <div class="meta">
+            Public generation enabled: <strong>{{ public_generation_enabled }}</strong><br />
+            Rate limit: <strong>{{ max_jobs_per_ip }}</strong> jobs per
+            <strong>{{ job_window_minutes }}</strong> minutes
+          </div>
+          <div class="notice" id="status-box">
+            Ready. Start a batch and this page will track the job automatically.
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2 class="section-title">Recent Jobs</h2>
+          <div class="jobs" id="jobs"></div>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top: 22px;">
+        <h2 class="section-title">Recent Videos</h2>
+        <div class="videos" id="videos"></div>
+      </section>
+    </main>
+
+    <script>
+      const jobsEl = document.getElementById("jobs");
+      const videosEl = document.getElementById("videos");
+      const statusBox = document.getElementById("status-box");
+      const form = document.getElementById("generate-form");
+
+      async function fetchJobs() {
+        const response = await fetch("/api/jobs");
+        const jobs = await response.json();
+        jobsEl.innerHTML = jobs.length
+          ? jobs.map(renderJob).join("")
+          : "<div class='job'>No jobs yet.</div>";
+      }
+
+      async function fetchVideos() {
+        const response = await fetch("/api/videos");
+        const videos = await response.json();
+        videosEl.innerHTML = videos.length
+          ? videos.map(renderVideo).join("")
+          : "<div class='video'>No renders yet.</div>";
+      }
+
+      function renderJob(job) {
+        const outputs = (job.outputs || []).map((output) => `
+          <div class="links">
+            <a href="${output.video_url}" target="_blank" rel="noreferrer">video</a>
+            <a href="${output.script_url}" target="_blank" rel="noreferrer">script</a>
+            <a href="${output.caption_url}" target="_blank" rel="noreferrer">caption</a>
+            <a href="${output.metadata_url}" target="_blank" rel="noreferrer">metadata</a>
+          </div>
+        `).join("");
+
+        return `
+          <article class="job">
+            <span class="pill">${job.status}</span>
+            <strong>${job.niche} batch</strong>
+            <div>${job.limit} video(s) • ${job.ab_hooks} hook variant(s)</div>
+            <div class="meta">${job.created_at}</div>
+            ${job.error ? `<div class="notice">${job.error}</div>` : ""}
+            ${outputs}
+          </article>
+        `;
+      }
+
+      function renderVideo(video) {
+        return `
+          <article class="video">
+            <span class="pill">${video.source || "generated"}</span>
+            <strong>${escapeHtml(video.title || video.variant_id)}</strong>
+            <div>${escapeHtml(video.caption || "")}</div>
+            <div class="links">
+              ${video.video_url ? `<a href="${video.video_url}" target="_blank" rel="noreferrer">open video</a>` : ""}
+              ${video.script_url ? `<a href="${video.script_url}" target="_blank" rel="noreferrer">script</a>` : ""}
+              ${video.caption_url ? `<a href="${video.caption_url}" target="_blank" rel="noreferrer">caption</a>` : ""}
+              <a href="${video.metadata_url}" target="_blank" rel="noreferrer">metadata</a>
+            </div>
+            ${video.video_url ? `<video controls preload="metadata" src="${video.video_url}"></video>` : ""}
+          </article>
+        `;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        statusBox.textContent = "Submitting job...";
+        const payload = {
+          niche: document.getElementById("niche").value,
+          limit: Number(document.getElementById("limit").value),
+          ab_hooks: Number(document.getElementById("ab_hooks").value),
+        };
+
+        const response = await fetch("/api/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          statusBox.textContent = data.detail || "Could not start job.";
+          return;
+        }
+
+        statusBox.textContent = `Job ${data.job_id} queued. Refreshing results automatically.`;
+        await fetchJobs();
+      });
+
+      fetchJobs();
+      fetchVideos();
+      setInterval(fetchJobs, 5000);
+      setInterval(fetchVideos, 8000);
+    </script>
+  </body>
+</html>

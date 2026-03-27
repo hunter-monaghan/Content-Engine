@@ -32,6 +32,13 @@ class Settings:
     pexels_api_key: str | None
     tiktok_trend_endpoint: str | None
     tiktok_trend_api_key: str | None
+    web_host: str
+    web_port: int
+    site_name: str
+    public_generation_enabled: bool
+    app_admin_token: str | None
+    max_jobs_per_ip: int
+    job_window_seconds: int
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -58,4 +65,18 @@ class Settings:
             pexels_api_key=os.getenv("PEXELS_API_KEY"),
             tiktok_trend_endpoint=os.getenv("TIKTOK_TREND_ENDPOINT"),
             tiktok_trend_api_key=os.getenv("TIKTOK_TREND_API_KEY"),
+            web_host=os.getenv("WEB_HOST", "127.0.0.1"),
+            web_port=int(os.getenv("PORT", os.getenv("WEB_PORT", "8000"))),
+            site_name=os.getenv("SITE_NAME", "Content Engine"),
+            public_generation_enabled=_env_bool("PUBLIC_GENERATION_ENABLED", True),
+            app_admin_token=os.getenv("APP_ADMIN_TOKEN"),
+            max_jobs_per_ip=int(os.getenv("MAX_JOBS_PER_IP", "3")),
+            job_window_seconds=int(os.getenv("JOB_WINDOW_SECONDS", "900")),
         )
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}

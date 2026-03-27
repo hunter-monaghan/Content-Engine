@@ -86,6 +86,19 @@ This creates a timestamped folder under `output/` containing:
 - `voice.mp3`
 - `final.mp4`
 
+### 3B. Run the Website Locally
+
+```bash
+content-engine web --host 0.0.0.0 --port 8000
+```
+
+Open `http://localhost:8000` to use the browser dashboard. The site lets you:
+
+- submit generation jobs
+- monitor job status
+- preview recent videos
+- open scripts, captions, and metadata
+
 ### 4. Batch Produce 10-50 Videos Per Day
 
 ```bash
@@ -161,3 +174,37 @@ Real secrets should never be committed. This repo now includes:
 ```bash
 python3 -m content_engine.main security-check
 ```
+
+## Deploy to a Live Website
+
+The repo now includes a production-ready web app and deployment files:
+
+- [`Dockerfile`](Dockerfile) installs FFmpeg and starts the FastAPI site
+- [`render.yaml`](render.yaml) defines a Render web service
+- the browser UI lives at [`index.html`](src/content_engine/web/templates/index.html)
+
+### Fastest Hosting Path
+
+Render or Railway are the easiest fits because this project needs:
+
+- a real Python backend
+- FFmpeg available at runtime
+- environment variables for API keys
+- persistent or external storage for generated media
+
+### Deploy Checklist
+
+1. Push this repo to GitHub.
+2. Create a web service on Render or Railway using the repo.
+3. Add environment variables from `.env.example`.
+4. Ensure the service exposes port `8000` or the platform `PORT`.
+5. Add persistent storage or move outputs to object storage for production.
+
+### Public Access Notes
+
+The website supports public generation by default, but that means strangers can consume your API credits. For production, you should strongly consider:
+
+- setting `APP_ADMIN_TOKEN`
+- disabling `PUBLIC_GENERATION_ENABLED`
+- adding object storage and a database
+- adding stronger rate limiting and user auth

@@ -28,6 +28,10 @@ def build_parser() -> argparse.ArgumentParser:
     schedule_parser.add_argument("--interval-minutes", type=int, default=180)
     schedule_parser.add_argument("--ab-hooks", type=int, default=2)
 
+    web_parser = subparsers.add_parser("web", help="Run the website and API.")
+    web_parser.add_argument("--host", default=None)
+    web_parser.add_argument("--port", type=int, default=None)
+
     subparsers.add_parser("security-check", help="Scan the repository for likely leaked secrets.")
 
     return parser
@@ -40,6 +44,18 @@ def main() -> None:
         print(format_findings(findings))
         if findings:
             raise SystemExit(1)
+        return
+
+    if args.command == "web":
+        import uvicorn
+        from content_engine.web.app import create_app
+
+        settings = Settings.from_env()
+        uvicorn.run(
+            create_app(settings),
+            host=args.host or settings.web_host,
+            port=args.port or settings.web_port,
+        )
         return
 
     from content_engine.pipeline.orchestrator import ContentEngine

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: content-engine
+    runtime: docker
+    plan: starter
+    autoDeployTrigger: commit
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: WEB_HOST
+        value: "0.0.0.0"
+      - key: PUBLIC_GENERATION_ENABLED
+        value: "true"
+      - key: SITE_NAME
+        value: "Content Engine"
